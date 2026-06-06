@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FALLBACK_CITIES, FALLBACK_TELEMETRY, FALLBACK_SWACHH_LEADERBOARD } from './fallbackData';
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis,
   CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart,
@@ -33,10 +34,12 @@ export default function App() {
   const fetchSwachhLeaderboard = async () => {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/v1/swachh/leaderboard");
+      if (!response.ok) throw new Error("Leaderboard API not reachable");
       const data = await response.json();
       setSwachhLeaderboard(data);
     } catch (error) {
-      console.error("Error fetching Swachh leaderboard:", error);
+      console.warn("Using fallback Swachh leaderboard data:", error);
+      setSwachhLeaderboard(FALLBACK_SWACHH_LEADERBOARD);
     }
   };
 
@@ -50,10 +53,12 @@ export default function App() {
   const fetchCities = async () => {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/v1/cities");
+      if (!response.ok) throw new Error("Cities list API not reachable");
       const data = await response.json();
       setCities(data);
     } catch (error) {
-      console.error("Error fetching cities list:", error);
+      console.warn("Using fallback cities list:", error);
+      setCities(FALLBACK_CITIES);
     }
   };
 
@@ -61,6 +66,7 @@ export default function App() {
     setLoading(true);
     try {
       const res = await fetch("http://127.0.0.1:8000/api/v1/cities/telemetry");
+      if (!res.ok) throw new Error("Telemetry API not reachable");
       const data = await res.json();
       const updatedData = {};
       data.forEach(cityObj => {
@@ -69,7 +75,13 @@ export default function App() {
       });
       setCityData(updatedData);
     } catch (error) {
-      console.error("Error fetching telemetry database:", error);
+      console.warn("Using fallback telemetry database:", error);
+      const updatedData = {};
+      FALLBACK_TELEMETRY.forEach(cityObj => {
+        cityObj._timestamp = Date.now();
+        updatedData[cityObj.city] = cityObj;
+      });
+      setCityData(updatedData);
     }
     setLoading(false);
   };
