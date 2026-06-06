@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ncBg: #070708;      /* Pitch Black */
+  --color-ncCard: #121315;    /* Dark Slate/Charcoal Card */
+  --color-ncBorder: #212226;  /* Grey Pill Border */
+  --color-ncGold: #e58e26;    /* Accent Score Gold */
+  --color-ncTextMuted: #9ca3af; /* Secondary text grey */
+  --color-ncGreen: #10b981;
+  --color-ncRed: #ef4444;
+  --color-ncBlue: #3b82f6;
+  --font-sans: "Plus Jakarta Sans", "Inter", sans-serif;
+}
+
+/* Custom scrollbar matching dark style */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #070708;
+}
+::-webkit-scrollbar-thumb {
+  background: #212226;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #e58e26;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #070708;
+  color: #ffffff;
+  font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+  overflow-x: hidden;
+}
+
+/* Keyframes for pulsing dots (Live Indicators) */
+@keyframes pulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+}
+
+.live-pulse-green {
+  background-color: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.live-pulse-red {
+  background-color: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.live-pulse-gold {
+  background-color: #e58e26;
+  box-shadow: 0 0 8px #e58e26;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+/* Premium Page & Card Fade In Transition Keyframes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom Styled Premium Spinner */
+@keyframes rotateSpinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.custom-spinner {
+  border: 3.5px solid rgba(229, 142, 38, 0.08);
+  border-top: 3.5px solid #e58e26;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  animation: rotateSpinner 0.75s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  box-shadow: 0 0 15px rgba(229, 142, 38, 0.05);
+}

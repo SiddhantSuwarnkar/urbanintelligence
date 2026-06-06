@@ -1,0 +1,28 @@
+# Python virtual environments & build artifacts
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.ipynb_checkpoints/
+
+# SQLite Database Cache files
+.cache/
+*.sqlite
+*.sqlite3
+.cache.sqlite
+.cache_test.sqlite
+
+# Node.js dependencies
+node_modules/
+frontend/node_modules/
+
+# Frontend production build
+frontend/dist/
+
+# OS metadata files
+.DS_Store
+Thumbs.db
+desktop.ini
