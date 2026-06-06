@@ -1088,7 +1088,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="border-t border-[#1c1d22] py-4 bg-[#070708] text-center text-xs text-gray-500 mt-6">
-        <p>&copy; 2026 Neural City Inc. All rights reserved. Urban Intelligence Telemetry Dashboard.</p>
+        <p>&copy; 2026 Dynamic Cities Inc. All rights reserved. Urban Intelligence Telemetry Dashboard.</p>
       </footer>
     </div>
   );
