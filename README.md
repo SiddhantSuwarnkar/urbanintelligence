@@ -39,7 +39,7 @@ Neural City/
 ├── frontend/                  # React client application (Vite template with backend dependency)
 │   ├── package.json
 │   └── ...
-└── api_integrated_frontend/   # Standalone React client (for Vercel deployment, zero backend dependency)
+└── api_integrated_frontend/   # Standalone React client (no backend dependency)
     ├── package.json
     ├── vite.config.js
     ├── index.html
@@ -103,9 +103,9 @@ Open your browser and navigate to **`http://127.0.0.1:8000/`** to view the live 
 
 ---
 
-## Standalone Client-Only Version (Vercel Ready)
+## Standalone Client-Only Version (No Backend)
 
-The `api_integrated_frontend` directory contains a standalone version of this dashboard. It migrates all backend logic (live API queries, local storage caching, NHB Residex and Swachh dataset analysis) to run directly inside the browser, allowing it to be hosted on Vercel without a Python API backend.
+The `api_integrated_frontend` directory contains a standalone version of this dashboard. It has no backend dependency, running all logic and data processing directly inside the browser.
 
 ### Running Standalone Locally:
 ```bash
@@ -113,11 +113,6 @@ cd api_integrated_frontend
 npm install
 npm run dev
 ```
-
-### Hosting on Vercel:
-1. Connect this repository to your Vercel Account.
-2. In the project build settings on Vercel, change the **Root Directory** to `api_integrated_frontend`.
-3. Deploy.
 
 ---
 
