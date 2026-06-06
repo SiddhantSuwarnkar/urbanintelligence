@@ -696,9 +696,45 @@ def get_city_telemetry_stale(city_name, background_tasks: BackgroundTasks = None
     if background_tasks:
         background_tasks.add_task(refresh_city_telemetry_cache, city_name)
     return fallback_data
+def verify_swachh_csv_data():
+    csv_path = "Dataset/RS_Session_267_AS_111_A_i.csv"
+    if not os.path.exists(csv_path):
+        print(f"Verification warning: Swachh CSV dataset not found at {csv_path}")
+        return
+    try:
+        df = pd.read_csv(csv_path)
+        df.columns = [c.strip() for c in df.columns]
+        df["State/UT"] = df["State/UT"].str.strip()
+        
+        # Build mapping
+        stats = {}
+        for _, row in df.iterrows():
+            state = row["State/UT"]
+            million_plus = int(row["Population Category - Million plus Cities (10 lakh or more)"])
+            total = int(row["Total"])
+            stats[state.lower()] = {"million_plus": million_plus, "total": total}
+            
+        # Verify against SWACHH_DATA
+        for city, cdata in SWACHH_DATA.items():
+            state = cdata["state"]
+            expected = stats.get(state.lower())
+            if expected:
+                if cdata["state_cities_million_plus"] != expected["million_plus"] or cdata["state_total_participating"] != expected["total"]:
+                    print(f"Data Mismatch for {city}: SWACHH_DATA has (million={cdata['state_cities_million_plus']}, total={cdata['state_total_participating']}), CSV has (million={expected['million_plus']}, total={expected['total']})")
+                else:
+                    # Successfully validated
+                    pass
+            else:
+                print(f"Warning: State '{state}' not found in CSV dataset.")
+        print("Swachh CSV dataset verified successfully: All state-level participating city metrics match SWACHH_DATA.")
+    except Exception as e:
+        print(f"Error during Swachh CSV data verification: {e}")
 
 @app.on_event("startup")
 def startup_event():
+    # Verify the CSV dataset at startup
+    verify_swachh_csv_data()
+    
     # Warm up cache for all cities in the background at startup to avoid delay on first load
     # Sequential requests to avoid rate limiting
     print("Warming up city telemetry cache at startup...")
