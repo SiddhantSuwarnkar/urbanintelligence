@@ -34,7 +34,29 @@ load_dotenv()
 TOMTOM_API_KEY = os.environ.get("TOMTOM_API_KEY", "Qd1h4laEToYoS20xbdhwYtR7efF18k0q")
 INDIANAPI_KEY = os.environ.get("INDIANAPI_KEY", "sk-live-IFrlZFIHJMtW9bp04obPRkJUqvfxkbVNApJ6fdsk")
 
-app = FastAPI(title="Neural City Macro Urban Intelligence API", version="1.0.0")
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Verify the CSV dataset at startup
+    verify_swachh_csv_data()
+    
+    # Warm up cache for all cities in the background at startup to avoid delay on first load
+    # Sequential requests to avoid rate limiting
+    print("Warming up city telemetry cache at startup...")
+    def warm_up():
+        for city_name in CITIES.keys():
+            try:
+                refresh_city_telemetry_cache(city_name)
+                time.sleep(1)  # 1-second delay between cities to respect rate limits
+            except Exception as e:
+                print(f"Startup warmup failed for {city_name}: {e}")
+    
+    import threading
+    threading.Thread(target=warm_up, daemon=True).start()
+    yield
+
+app = FastAPI(title="Neural City Macro Urban Intelligence API", version="1.0.0", lifespan=lifespan)
 
 # Rate limiter: Allow only 2 concurrent Overpass requests
 overpass_semaphore = Semaphore(2)
@@ -730,24 +752,6 @@ def verify_swachh_csv_data():
     except Exception as e:
         print(f"Error during Swachh CSV data verification: {e}")
 
-@app.on_event("startup")
-def startup_event():
-    # Verify the CSV dataset at startup
-    verify_swachh_csv_data()
-    
-    # Warm up cache for all cities in the background at startup to avoid delay on first load
-    # Sequential requests to avoid rate limiting
-    print("Warming up city telemetry cache at startup...")
-    def warm_up():
-        for city_name in CITIES.keys():
-            try:
-                refresh_city_telemetry_cache(city_name)
-                time.sleep(1)  # 1-second delay between cities to respect rate limits
-            except Exception as e:
-                print(f"Startup warmup failed for {city_name}: {e}")
-    
-    import threading
-    threading.Thread(target=warm_up, daemon=True).start()
 
 @app.get("/api/v1/cities")
 def get_cities_list():
