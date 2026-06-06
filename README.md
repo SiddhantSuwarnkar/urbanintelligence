@@ -30,17 +30,20 @@ DC is a macro-urban telemetry intelligence dashboard representing structural out
 
 ```text
 Neural City/
-├── main.py               # FastAPI backend server
-├── .gitignore            # Git exclusion guidelines
-├── README.md             # Project documentation
-├── Dataset/              # Source datasets (Residex & Swachh state metrics)
+├── main.py                    # FastAPI backend server
+├── .gitignore                 # Git exclusion guidelines
+├── README.md                  # Project documentation
+├── Dataset/                   # Source datasets (Residex & Swachh state metrics)
 │   ├── Residex_Data (2).xls
 │   └── RS_Session_267_AS_111_A_i.csv
-└── frontend/             # React client application (Vite template)
+├── frontend/                  # React client application (Vite template with backend dependency)
+│   ├── package.json
+│   └── ...
+└── api_integrated_frontend/   # Standalone React client (for Vercel deployment, zero backend dependency)
     ├── package.json
     ├── vite.config.js
     ├── index.html
-    └── src/              # App components & styles (DC branding)
+    └── src/                   # Client-side components & telemetry logic (localStorage cache)
 ```
 
 ---
@@ -97,6 +100,24 @@ Launch the FastAPI uvicorn daemon:
 python main.py
 ```
 Open your browser and navigate to **`http://127.0.0.1:8000/`** to view the live dashboard.
+
+---
+
+## Standalone Client-Only Version (Vercel Ready)
+
+The `api_integrated_frontend` directory contains a standalone version of this dashboard. It migrates all backend logic (live API queries, local storage caching, NHB Residex and Swachh dataset analysis) to run directly inside the browser, allowing it to be hosted on Vercel without a Python API backend.
+
+### Running Standalone Locally:
+```bash
+cd api_integrated_frontend
+npm install
+npm run dev
+```
+
+### Hosting on Vercel:
+1. Connect this repository to your Vercel Account.
+2. In the project build settings on Vercel, change the **Root Directory** to `api_integrated_frontend`.
+3. Deploy.
 
 ---
 
