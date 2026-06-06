@@ -1,4 +1,5 @@
 # Python virtual environments & build artifacts
+.env
 venv/
 .venv/
 env/

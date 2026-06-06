@@ -14,6 +14,25 @@ from retry_requests import retry
 from concurrent.futures import ThreadPoolExecutor
 import asyncio
 from asyncio import Semaphore
+# Load environment variables from .env file if it exists
+def load_dotenv(dotenv_path=".env"):
+    if os.path.exists(dotenv_path):
+        with open(dotenv_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                if "=" in line:
+                    key, val = line.split("=", 1)
+                    key = key.strip()
+                    val = val.strip().strip('"').strip("'")
+                    os.environ[key] = val
+
+load_dotenv()
+
+# Global configuration for external API Keys with secure fallback
+TOMTOM_API_KEY = os.environ.get("TOMTOM_API_KEY", "Qd1h4laEToYoS20xbdhwYtR7efF18k0q")
+INDIANAPI_KEY = os.environ.get("INDIANAPI_KEY", "sk-live-IFrlZFIHJMtW9bp04obPRkJUqvfxkbVNApJ6fdsk")
 
 app = FastAPI(title="Neural City Macro Urban Intelligence API", version="1.0.0")
 
@@ -431,12 +450,10 @@ def fetch_tomtom_traffic(lat, lon, city_name):
     cached = get_cache(cache_key)
     if cached is not None:
         return cached
-
-    API_KEY = "Qd1h4laEToYoS20xbdhwYtR7efF18k0q"
     url = f"https://api.tomtom.com/traffic/services/4/flowSegmentData/absolute/10/json"
     params = {
         "point": f"{lat},{lon}",
-        "key": API_KEY,
+        "key": TOMTOM_API_KEY,
         "unit": "KMPH"
     }
     try:
@@ -474,8 +491,6 @@ def fetch_all_fuel_prices_indianapi():
     cached = get_cache(cache_key)
     if cached is not None:
         return cached
-
-    INDIANAPI_KEY = "sk-live-IFrlZFIHJMtW9bp04obPRkJUqvfxkbVNApJ6fdsk"
     url = "https://fuel.indianapi.in/live_fuel_price"
     headers = {"x-api-key": INDIANAPI_KEY}
     params = {"fuel_type": "petrol", "location_type": "city", "city": "all"}
